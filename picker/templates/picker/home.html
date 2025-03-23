@@ -5,26 +5,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Merry Go Round Picker</title>
     <style>
-        .slot {
-            width: 50px;
-            height: 50px;
-            display: inline-block;
-            margin: 5px;
-            text-align: center;
-            line-height: 50px;
-            font-size: 20px;
-            background-color: black;
-            color: white;
-            cursor: pointer;
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
         }
-        .picked {
-            background-color: white;
-            color: black;
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        #slots {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .slot {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #333;
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .slot.picked {
+            background-color: #4CAF50;
+            cursor: not-allowed;
+        }
+        #user {
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #4CAF50;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            width: 200px;
+            text-align: center;
+        }
+        #pick {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #pick:hover {
+            background-color: #45a049;
+        }
+        a button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #008CBA;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+        }
+        a button:hover {
+            background-color: #007B9E;
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #4CAF50;
         }
     </style>
 </head>
 <body>
-    <h1>Pick a Number</h1>
+    <h1>Merry Go Round Picker</h1>
     <div id="slots">
         {% for number in "xxxxxxxxxxxxx" %}
             <div class="slot" data-number="{{ forloop.counter }}"></div>
@@ -33,6 +98,7 @@
     <input type="text" id="user" placeholder="Enter your name">
     <button id="pick">Pick a Number</button>
     <a href="{% url 'results' %}"><button>View Results</button></a>
+    <div id="message" class="message"></div>
 
     <script>
         document.getElementById('pick').addEventListener('click', function() {
@@ -41,6 +107,7 @@
                 alert('Please enter your name');
                 return;
             }
+
             fetch('/pick/', {
                 method: 'POST',
                 headers: {
@@ -62,7 +129,7 @@
                     const slot = document.querySelector(`.slot[data-number="${data.number}"]`);
                     slot.classList.add('picked');
                     slot.textContent = data.number;
-                    alert(`You picked number ${data.number}`);
+                    document.getElementById('message').textContent = `You picked number ${data.number}!`;
                 }
             })
             .catch(error => {
