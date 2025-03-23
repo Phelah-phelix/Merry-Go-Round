@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merry Go Round Picker</title>
+    <style>
+        .slot {
+            width: 50px;
+            height: 50px;
+            display: inline-block;
+            margin: 5px;
+            text-align: center;
+            line-height: 50px;
+            font-size: 20px;
+            background-color: black;
+            color: white;
+            cursor: pointer;
+        }
+        .picked {
+            background-color: white;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pick a Number</h1>
+    <div id="slots">
+        {% for number in "xxxxxxxxxxxxx" %}
+            <div class="slot" data-number="{{ forloop.counter }}"></div>
+        {% endfor %}
+    </div>
+    <input type="text" id="user" placeholder="Enter your name">
+    <button id="pick">Pick a Number</button>
+    <a href="{% url 'results' %}"><button>View Results</button></a>
+
+    <script>
+        document.getElementById('pick').addEventListener('click', function() {
+            const user = document.getElementById('user').value;
+            if (!user) {
+                alert('Please enter your name');
+                return;
+            }
+            fetch('/pick/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: `user=${encodeURIComponent(user)}`
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    const slot = document.querySelector(`.slot[data-number="${data.number}"]`);
+                    slot.classList.add('picked');
+                    slot.textContent = data.number;
+                    alert(`You picked number ${data.number}`);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while picking a number. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>
