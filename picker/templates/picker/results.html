@@ -3,23 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Results</title>
+    <title>Results - Merry-Go-Round</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Add the CSS from above here */
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
-    <h1>Results</h1>
-    <table>
-        <tr>
-            <th>Number</th>
-            <th>User</th>
-        </tr>
-        {% for number in picked_numbers %}
-            <tr>
-                <td>{{ number.number }}</td>
-                <td>{{ number.user }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-    <a href="{% url 'home' %}"><button>Go Back</button></a>
-    <a href="{% url 'clear_results' %}"><button>Clear Results</button></a>
+    <div class="container">
+        <div class="results-header">
+            <h1>🎯 Picked Numbers</h1>
+            <div class="action-buttons">
+                <a href="{% url 'save_results' %}"><button>💾 Save Results</button></a>
+                <a href="{% url 'clear_results' %}"><button class="btn-secondary">🗑️ Clear Results</button></a>
+                <a href="{% url 'home' %}"><button>🏠 Back Home</button></a>
+            </div>
+        </div>
+        
+        {% if picked_numbers %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Picked By</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for num in picked_numbers %}
+                <tr>
+                    <td>{{ num.number }}</td>
+                    <td>{{ num.user }}</td>
+                    <td>{{ num.created_at|timesince }} ago</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <h2>No numbers have been picked yet</h2>
+            <p>Go back to the home page to start picking numbers!</p>
+            <a href="{% url 'home' %}"><button>🎠 Start Picking</button></a>
+        </div>
+        {% endif %}
+    </div>
 </body>
 </html>

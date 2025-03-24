@@ -3,140 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Merry Go Round Picker</title>
+    <title>Merry-Go-Round Number Picker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f8ff;
             margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            flex-direction: column;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         h1 {
-            color: #4CAF50;
-            margin-bottom: 20px;
+            color: #4b0082;
+            margin-bottom: 30px;
         }
         #slots {
             display: flex;
             flex-wrap: wrap;
+            justify-content: center;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
         .slot {
             width: 60px;
             height: 60px;
+            background-color: #9370db;
+            border-radius: 50%;
             display: flex;
-            justify-content: center;
             align-items: center;
-            background-color: #333;
-            color: #fff;
+            justify-content: center;
             font-size: 24px;
             font-weight: bold;
-            border-radius: 10px;
+            color: white;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            position: relative;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
         }
         .slot.picked {
-            background-color: #4CAF50;
-            cursor: not-allowed;
+            background-color: #4b0082;
+            transform: scale(1.05);
         }
-        #user {
-            padding: 10px;
+        .slot:hover {
+            transform: scale(1.05);
+        }
+        .tooltip {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+        }
+        .slot:hover .tooltip {
+            opacity: 1;
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+        input {
+            padding: 10px 15px;
+            border: 2px solid #9370db;
+            border-radius: 8px;
             font-size: 16px;
-            border: 2px solid #4CAF50;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            width: 200px;
+            width: 250px;
             text-align: center;
         }
-        #pick {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: #fff;
+        button {
+            padding: 12px 25px;
+            background-color: #4b0082;
+            color: white;
             border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        #pick:hover {
-            background-color: #45a049;
-        }
-        a button {
-            padding: 10px 20px;
+            border-radius: 8px;
             font-size: 16px;
-            background-color: #008CBA;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-            text-decoration: none;
+            transition: background-color 0.3s;
         }
-        a button:hover {
-            background-color: #007B9E;
+        button:hover {
+            background-color: #5a1a9a;
         }
-        .message {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #4CAF50;
+        .btn-secondary {
+            background-color: #9370db;
+        }
+        .btn-secondary:hover {
+            background-color: #a07fd6;
+        }
+        .alert {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .alert-error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .alert-success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        /* New styles for hidden numbers */
+        .slot::before {
+            content: "?";
+            display: block;
+        }
+        .slot.picked::before {
+            content: none;
+        }
+        .slot.picked {
+            color: white;
         }
     </style>
 </head>
 <body>
-    <h1>Merry Go Round Picker</h1>
-    <div id="slots">
-        {% for number in "xxxxxxxxxxxxx" %}
+    <div class="container">
+        <h1>🎠 Merry-Go-Round Number Picker</h1>
+        
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+        
+        <div id="slots">
+            {% for i in "1234567890123" %}
             <div class="slot" data-number="{{ forloop.counter }}"></div>
-        {% endfor %}
+            {% endfor %}
+        </div>
+        
+        <div class="controls">
+            <input type="text" id="user" placeholder="Enter your name" required>
+            <button id="pick">✨ Pick a Number</button>
+            <a href="{% url 'results' %}"><button class="btn-secondary">📊 View Results</button></a>
+        </div>
     </div>
-    <input type="text" id="user" placeholder="Enter your name">
-    <button id="pick">Pick a Number</button>
-    <a href="{% url 'results' %}"><button>View Results</button></a>
-    <div id="message" class="message"></div>
 
     <script>
-        document.getElementById('pick').addEventListener('click', function() {
-            const user = document.getElementById('user').value;
-            if (!user) {
-                alert('Please enter your name');
-                return;
-            }
+    document.getElementById('pick').addEventListener('click', function() {
+        const user = document.getElementById('user').value.trim();
+        if (!user) {
+            alert('Please enter your name');
+            return;
+        }
 
-            fetch('/pick/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: `user=${encodeURIComponent(user)}`
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    const slot = document.querySelector(`.slot[data-number="${data.number}"]`);
-                    slot.classList.add('picked');
-                    slot.textContent = data.number;
-                    document.getElementById('message').textContent = `You picked number ${data.number}!`;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while picking a number. Please try again.');
-            });
+        fetch('/pick/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: `user=${encodeURIComponent(user)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                const slot = document.querySelector(`[data-number="${data.number}"]`);
+                slot.classList.add('picked');
+                slot.textContent = data.number;
+                slot.innerHTML += `<span class="tooltip">${user}</span>`;
+                
+                // Visual feedback
+                slot.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    slot.style.transform = 'scale(1.05)';
+                }, 300);
+                
+                // Clear input
+                document.getElementById('user').value = '';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Something went wrong. Please try again.');
         });
+    });
     </script>
 </body>
 </html>

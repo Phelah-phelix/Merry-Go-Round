@@ -1,9 +1,10 @@
 from django.urls import path
-from . import views  # Import views from the current app
+from . import views
 
-# Define the urlpatterns list
 urlpatterns = [
-    path('', views.home, name='home'),  # Home page URL
-    path('pick/', views.pick_number, name='pick_number'),  # URL for picking a number
-    path('results/', views.results, name='results'),  # URL for viewing results
+    path('', views.home, name='home'),
+    path('pick/', views.pick_number, name='pick_number'),
+    path('results/', views.results, name='results'),
+    path('clear/', views.clear_results, name='clear_results'),
+    path('save/', views.save_results, name='save_results'),
 ]
