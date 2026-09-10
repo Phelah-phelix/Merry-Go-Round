@@ -33,10 +33,15 @@
             <h1>🎯 Picked Numbers</h1>
             <div class="action-buttons">
                 <a href="{% url 'save_results' %}"><button>💾 Save Results</button></a>
-                <a href="{% url 'clear_results' %}"><button class="btn-secondary">🗑️ Clear Results</button></a>
                 <a href="{% url 'home' %}"><button>🏠 Back Home</button></a>
             </div>
         </div>
+
+        <form method="post" action="{% url 'clear_results' %}" style="margin-bottom: 20px; display: flex; gap: 10px; justify-content: center; align-items: center;">
+            {% csrf_token %}
+            <input type="text" name="user" placeholder="Enter your name to clear your result" required style="width: 280px;">
+            <button type="submit" class="btn-secondary">🗑️ Clear My Result</button>
+        </form>
         
         {% if picked_numbers %}
         <table>
