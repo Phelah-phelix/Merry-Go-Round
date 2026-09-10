@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
@@ -42,3 +43,7 @@ class PickerBehaviorTests(TestCase):
 
         self.assertEqual(PickedNumber.objects.count(), 7)
         self.assertEqual(list(PickedNumber.objects.order_by('number').values_list('number', flat=True)), list(range(1, 8)))
+
+    def test_static_root_is_configured_for_collectstatic(self):
+        self.assertTrue(settings.STATIC_ROOT)
+        self.assertIn('staticfiles', str(settings.STATIC_ROOT))
