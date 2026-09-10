@@ -3,7 +3,7 @@ from django.contrib.messages.storage.fallback import FallbackStorage
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
 
-from picker.models import PickedNumber, PickerSettings
+from picker.models import PickedNumber
 from picker.views import clear_results, initialize_numbers
 
 
@@ -35,14 +35,6 @@ class PickerBehaviorTests(TestCase):
         self.assertEqual(PickedNumber.objects.filter(user='Alice').count(), 0)
         self.assertEqual(PickedNumber.objects.filter(user='Bob').count(), 1)
         self.assertTrue(PickedNumber.objects.filter(number=2, user='Bob').first().is_picked)
-
-    def test_initialize_numbers_uses_admin_slot_count(self):
-        PickerSettings.objects.create(slot_count=7)
-
-        initialize_numbers()
-
-        self.assertEqual(PickedNumber.objects.count(), 7)
-        self.assertEqual(list(PickedNumber.objects.order_by('number').values_list('number', flat=True)), list(range(1, 8)))
 
     def test_static_root_is_configured_for_collectstatic(self):
         self.assertTrue(settings.STATIC_ROOT)

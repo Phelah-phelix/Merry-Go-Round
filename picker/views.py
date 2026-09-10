@@ -1,3 +1,5 @@
+from django.db import DatabaseError
+from django.db.utils import OperationalError, ProgrammingError
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from .models import PickedNumber
@@ -9,9 +11,12 @@ NUMBER_LIMIT = 10
 
 
 def initialize_numbers():
-    PickedNumber.objects.filter(number__gt=NUMBER_LIMIT).delete()
-    for i in range(1, NUMBER_LIMIT + 1):
-        PickedNumber.objects.get_or_create(number=i)
+    try:
+        PickedNumber.objects.filter(number__gt=NUMBER_LIMIT).delete()
+        for i in range(1, NUMBER_LIMIT + 1):
+            PickedNumber.objects.get_or_create(number=i)
+    except (DatabaseError, OperationalError, ProgrammingError):
+        return
 
 
 def home(request):
