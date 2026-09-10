@@ -57,7 +57,7 @@
                 <tr>
                     <td>{{ num.number }}</td>
                     <td>{{ num.user }}</td>
-                    <td>{{ num.created_at|timesince }} ago</td>
+                    <td class="picked-time" data-timestamp="{{ num.created_at|date:'c' }}">Picked at: {{ num.created_at|date:'F d, Y - H:i:s' }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -70,5 +70,22 @@
         </div>
         {% endif %}
     </div>
+
+    <script>
+        function updateTimes() {
+            document.querySelectorAll('.picked-time').forEach(function (cell) {
+                const value = cell.getAttribute('data-timestamp');
+                if (!value) return;
+
+                const date = new Date(value);
+                if (Number.isNaN(date.getTime())) return;
+
+                cell.textContent = date.toLocaleString();
+            });
+        }
+
+        updateTimes();
+        setInterval(updateTimes, 1000);
+    </script>
 </body>
 </html>
